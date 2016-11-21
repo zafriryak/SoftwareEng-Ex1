@@ -1,3 +1,9 @@
+
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.Stack;
+
 /******************************************************************************
  *  Compilation:  javac EdgeWeightedDigraph.java
  *  Execution:    java EdgeWeightedDigraph digraph.txt
@@ -33,13 +39,16 @@
  *  @author Robert Sedgewick
  *  @author Kevin Wayne
  */
+
+
 public class EdgeWeightedDigraph {
     private static final String NEWLINE = System.getProperty("line.separator");
 
     private final int V;                // number of vertices in this digraph
     private int E;                      // number of edges in this digraph
-    private Bag<DirectedEdge>[] adj;    // adj[v] = adjacency list for vertex v
+    Bag<DirectedEdge>[] adj;    // adj[v] = adjacency list for vertex v
     private int[] indegree;             // indegree[v] = indegree of vertex v
+    private Queue<Double> que = new LinkedList<Double>() ;
     
     /**
      * Initializes an empty edge-weighted digraph with {@code V} vertices and 0 edges.
@@ -57,25 +66,7 @@ public class EdgeWeightedDigraph {
             adj[v] = new Bag<DirectedEdge>();
     }
 
-    /**
-     * Initializes a random edge-weighted digraph with {@code V} vertices and <em>E</em> edges.
-     *
-     * @param  V the number of vertices
-     * @param  E the number of edges
-     * @throws IllegalArgumentException if {@code V < 0}
-     * @throws IllegalArgumentException if {@code E < 0}
-     */
-    public EdgeWeightedDigraph(int V, int E) {
-        this(V);
-        if (E < 0) throw new IllegalArgumentException("Number of edges in a Digraph must be nonnegative");
-        for (int i = 0; i < E; i++) {
-            int v = StdRandom.uniform(V);
-            int w = StdRandom.uniform(V);
-            double weight = 0.01 * StdRandom.uniform(100);
-            DirectedEdge e = new DirectedEdge(v, w, weight);
-            addEdge(e);
-        }
-    }
+
 
     /**  
      * Initializes an edge-weighted digraph from the specified input stream.
@@ -85,9 +76,10 @@ public class EdgeWeightedDigraph {
      * with each entry separated by whitespace.
      *
      * @param  in the input stream
-     * @throws IllegalArgumentException if the endpoints of any edge are not in prescribed range
+     * @throws IndexOutOfBoundsException if the endpoints of any edge are not in prescribed range
      * @throws IllegalArgumentException if the number of vertices or edges is negative
      */
+    
     public EdgeWeightedDigraph(In in) {
         this(in.readInt());
         int E = in.readInt();
@@ -95,8 +87,8 @@ public class EdgeWeightedDigraph {
         for (int i = 0; i < E; i++) {
             int v = in.readInt();
             int w = in.readInt();
-            validateVertex(v);
-            validateVertex(w);
+            if (v < 0 || v >= V) throw new IndexOutOfBoundsException("vertex " + v + " is not between 0 and " + (V-1));
+            if (w < 0 || w >= V) throw new IndexOutOfBoundsException("vertex " + w + " is not between 0 and " + (V-1));
             double weight = in.readDouble();
             addEdge(new DirectedEdge(v, w, weight));
         }
@@ -142,17 +134,17 @@ public class EdgeWeightedDigraph {
         return E;
     }
 
-    // throw an IllegalArgumentException unless {@code 0 <= v < V}
+    // throw an IndexOutOfBoundsException unless {@code 0 <= v < V}
     private void validateVertex(int v) {
         if (v < 0 || v >= V)
-            throw new IllegalArgumentException("vertex " + v + " is not between 0 and " + (V-1));
+            throw new IndexOutOfBoundsException("vertex " + v + " is not between 0 and " + (V-1));
     }
 
     /**
      * Adds the directed edge {@code e} to this edge-weighted digraph.
      *
      * @param  e the edge
-     * @throws IllegalArgumentException unless endpoints of edge are between {@code 0}
+     * @throws IndexOutOfBoundsException unless endpoints of edge are between {@code 0}
      *         and {@code V-1}
      */
     public void addEdge(DirectedEdge e) {
@@ -171,7 +163,7 @@ public class EdgeWeightedDigraph {
      *
      * @param  v the vertex
      * @return the directed edges incident from vertex {@code v} as an Iterable
-     * @throws IllegalArgumentException unless {@code 0 <= v < V}
+     * @throws IndexOutOfBoundsException unless {@code 0 <= v < V}
      */
     public Iterable<DirectedEdge> adj(int v) {
         validateVertex(v);
@@ -184,7 +176,7 @@ public class EdgeWeightedDigraph {
      *
      * @param  v the vertex
      * @return the outdegree of vertex {@code v}
-     * @throws IllegalArgumentException unless {@code 0 <= v < V}
+     * @throws IndexOutOfBoundsException unless {@code 0 <= v < V}
      */
     public int outdegree(int v) {
         validateVertex(v);
@@ -197,7 +189,7 @@ public class EdgeWeightedDigraph {
      *
      * @param  v the vertex
      * @return the indegree of vertex {@code v}
-     * @throws IllegalArgumentException unless {@code 0 <= v < V}
+     * @throws IndexOutOfBoundsException unless {@code 0 <= v < V}
      */
     public int indegree(int v) {
         validateVertex(v);
@@ -221,12 +213,52 @@ public class EdgeWeightedDigraph {
         return list;
     } 
 
+   
+    /*
+    * Set the weight of the black list vertex to 99999 
+    * for skiping this points in my calculate.
+    * The que saves the edges we change in the right order (FIFO) 
+    * so we can change it back in the function RetBL
+    */
+    public void setBL(int[] BList) {
+
+        for (int i = 0; i < BList.length; i++) {
+            Bag B = adj[BList[i]];
+            Iterator It = B.iterator();
+            for (int j = 0; It.hasNext() == true; j++) {
+                DirectedEdge e = (DirectedEdge) It.next();
+                que.add(e.weight());
+                e.setWeight(99999);
+
+            }
+        }
+
+    }
+
+    /*
+    * Return the graph to his original way without the black list points
+    */
+    public void RetBL(int[] BList) {
+        for (int i = 0; i < BList.length; i++)
+        {
+            Bag B = adj[BList[i]];
+            Iterator It = B.iterator();
+            for (int j = 0; It.hasNext() == true; j++) {
+                DirectedEdge e = (DirectedEdge) It.next();
+                e.setWeight(que.poll());
+
+            }
+        }
+    }
+    
+    
     /**
      * Returns a string representation of this edge-weighted digraph.
      *
      * @return the number of vertices <em>V</em>, followed by the number of edges <em>E</em>,
      *         followed by the <em>V</em> adjacency lists of edges
      */
+    
     public String toString() {
         StringBuilder s = new StringBuilder();
         s.append(V + " " + E + NEWLINE);
@@ -245,10 +277,10 @@ public class EdgeWeightedDigraph {
      *
      * @param args the command-line arguments
      */
-    public static void main(String[] args) {
-        In in = new In(args[0]);
-        EdgeWeightedDigraph G = new EdgeWeightedDigraph(in);
-        StdOut.println(G);
-    }
+//    public static void main(String[] args) {
+//        In in = new In(args[0]);
+//        EdgeWeightedDigraph G = new EdgeWeightedDigraph(in);
+//        StdOut.println(G);
+//    }
 
 }
