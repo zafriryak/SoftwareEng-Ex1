@@ -1,3 +1,6 @@
+
+import java.util.Stack;
+
 /******************************************************************************
  *  Compilation:  javac DijkstraSP.java
  *  Execution:    java DijkstraSP input.txt s
@@ -71,9 +74,6 @@ public class DijkstraSP {
 
         distTo = new double[G.V()];
         edgeTo = new DirectedEdge[G.V()];
-
-        validateVertex(s);
-
         for (int v = 0; v < G.V(); v++)
             distTo[v] = Double.POSITIVE_INFINITY;
         distTo[s] = 0.0;
@@ -107,10 +107,8 @@ public class DijkstraSP {
      * @param  v the destination vertex
      * @return the length of a shortest path from the source vertex {@code s} to vertex {@code v};
      *         {@code Double.POSITIVE_INFINITY} if no such path
-     * @throws IllegalArgumentException unless {@code 0 <= v < V}
      */
     public double distTo(int v) {
-        validateVertex(v);
         return distTo[v];
     }
 
@@ -120,10 +118,8 @@ public class DijkstraSP {
      * @param  v the destination vertex
      * @return {@code true} if there is a path from the source vertex
      *         {@code s} to vertex {@code v}; {@code false} otherwise
-     * @throws IllegalArgumentException unless {@code 0 <= v < V}
      */
     public boolean hasPathTo(int v) {
-        validateVertex(v);
         return distTo[v] < Double.POSITIVE_INFINITY;
     }
 
@@ -133,10 +129,8 @@ public class DijkstraSP {
      * @param  v the destination vertex
      * @return a shortest path from the source vertex {@code s} to vertex {@code v}
      *         as an iterable of edges, and {@code null} if no such path
-     * @throws IllegalArgumentException unless {@code 0 <= v < V}
      */
     public Iterable<DirectedEdge> pathTo(int v) {
-        validateVertex(v);
         if (!hasPathTo(v)) return null;
         Stack<DirectedEdge> path = new Stack<DirectedEdge>();
         for (DirectedEdge e = edgeTo[v]; e != null; e = edgeTo[e.from()]) {
@@ -149,7 +143,7 @@ public class DijkstraSP {
     // check optimality conditions:
     // (i) for all edges e:            distTo[e.to()] <= distTo[e.from()] + e.weight()
     // (ii) for all edge e on the SPT: distTo[e.to()] == distTo[e.from()] + e.weight()
-    private boolean check(EdgeWeightedDigraph G, int s) {
+    public boolean check(EdgeWeightedDigraph G, int s) {
 
         // check that edge weights are nonnegative
         for (DirectedEdge e : G.edges()) {
@@ -197,12 +191,6 @@ public class DijkstraSP {
         return true;
     }
 
-    // throw an IllegalArgumentException unless {@code 0 <= v < V}
-    private void validateVertex(int v) {
-        int V = distTo.length;
-        if (v < 0 || v >= V)
-            throw new IllegalArgumentException("vertex " + v + " is not between 0 and " + (V-1));
-    }
 
     /**
      * Unit tests the {@code DijkstraSP} data type.
@@ -234,3 +222,27 @@ public class DijkstraSP {
     }
 
 }
+
+/******************************************************************************
+ *  Copyright 2002-2016, Robert Sedgewick and Kevin Wayne.
+ *
+ *  This file is part of algs4.jar, which accompanies the textbook
+ *
+ *      Algorithms, 4th edition by Robert Sedgewick and Kevin Wayne,
+ *      Addison-Wesley Professional, 2011, ISBN 0-321-57351-X.
+ *      http://algs4.cs.princeton.edu
+ *
+ *
+ *  algs4.jar is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  algs4.jar is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with algs4.jar.  If not, see http://www.gnu.org/licenses.
+ ******************************************************************************/

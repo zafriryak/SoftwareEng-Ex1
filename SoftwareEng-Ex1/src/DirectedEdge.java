@@ -6,6 +6,7 @@
  *  Immutable weighted directed edge.
  *
  ******************************************************************************/
+
 /**
  *  The {@code DirectedEdge} class represents a weighted edge in an 
  *  {@link EdgeWeightedDigraph}. Each edge consists of two integers
@@ -23,7 +24,7 @@
 public class DirectedEdge { 
     private final int v;
     private final int w;
-    private final double weight;
+    private  double weight;
 
     /**
      * Initializes a directed edge from vertex {@code v} to vertex {@code w} with
@@ -31,13 +32,13 @@ public class DirectedEdge {
      * @param v the tail vertex
      * @param w the head vertex
      * @param weight the weight of the directed edge
-     * @throws IllegalArgumentException if either {@code v} or {@code w}
+     * @throws IndexOutOfBoundsException if either {@code v} or {@code w}
      *    is a negative integer
      * @throws IllegalArgumentException if {@code weight} is {@code NaN}
      */
     public DirectedEdge(int v, int w, double weight) {
-        if (v < 0) throw new IllegalArgumentException("Vertex names must be nonnegative integers");
-        if (w < 0) throw new IllegalArgumentException("Vertex names must be nonnegative integers");
+        if (v < 0) throw new IndexOutOfBoundsException("Vertex names must be nonnegative integers");
+        if (w < 0) throw new IndexOutOfBoundsException("Vertex names must be nonnegative integers");
         if (Double.isNaN(weight)) throw new IllegalArgumentException("Weight is NaN");
         this.v = v;
         this.w = w;
@@ -67,6 +68,10 @@ public class DirectedEdge {
     public double weight() {
         return weight;
     }
+    
+    public void setWeight(double weight){
+    	this.weight = weight ;	
+    }
 
     /**
      * Returns a string representation of the directed edge.
@@ -86,3 +91,27 @@ public class DirectedEdge {
         StdOut.println(e);
     }
 }
+
+/******************************************************************************
+ *  Copyright 2002-2016, Robert Sedgewick and Kevin Wayne.
+ *
+ *  This file is part of algs4.jar, which accompanies the textbook
+ *
+ *      Algorithms, 4th edition by Robert Sedgewick and Kevin Wayne,
+ *      Addison-Wesley Professional, 2011, ISBN 0-321-57351-X.
+ *      http://algs4.cs.princeton.edu
+ *
+ *
+ *  algs4.jar is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  algs4.jar is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with algs4.jar.  If not, see http://www.gnu.org/licenses.
+ ******************************************************************************/
