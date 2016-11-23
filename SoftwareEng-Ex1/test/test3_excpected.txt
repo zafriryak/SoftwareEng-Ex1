@@ -1,2 +1,0 @@
-1 2 0 5.1
-Graph: |V|=6  |E|=6  !TIE   Diameter=3  Radius=2
