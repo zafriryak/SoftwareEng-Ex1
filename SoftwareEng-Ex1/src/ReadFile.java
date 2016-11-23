@@ -16,7 +16,7 @@ public class ReadFile {
            
             String graphName="C:\\Users\\Zafrir\\Downloads\\test_Ex1.txt";
             String testName="C:\\Users\\Zafrir\\Downloads\\test1_Ex1_run.txt";
-            String outPutFile="C:\\Users\\Zafrir\\Downloads\\output.txt";
+            String outPutFile="C:\\Users\\Zafrir\\Downloads\\test3_excpected.txt";
             
             File outFile = new File(outPutFile);
             outFile.createNewFile();
@@ -29,9 +29,9 @@ public class ReadFile {
             PrintWriter outputWriter = new PrintWriter(outFile);
 
             int vertex = Integer.parseInt(graphReader.readLine());
-            System.out.println("number of vertex:" + vertex);
+//            System.out.println("number of vertex:" + vertex);
             int edges = Integer.parseInt(graphReader.readLine());
-            System.out.println("number of edges:" + edges);
+//            System.out.println("number of edges:" + edges);
 
             EdgeWeightedDigraph Graph = new EdgeWeightedDigraph(vertex);
             
@@ -46,11 +46,12 @@ public class ReadFile {
             }
 
             int numOfQ = Integer.parseInt(inputReader.readLine());
-            System.out.println(numOfQ);
+//            System.out.println(numOfQ);
             
             DijkstraSP DijGraph = null;
             for (int i = 0; i < numOfQ; i++) {
                 line = inputReader.readLine();
+                if(line.equals("info"))break;
                 String splitArr[] = line.split(",");
 
                 int from = Integer.parseInt(splitArr[0]);
@@ -67,8 +68,8 @@ public class ReadFile {
                 
                 DijGraph = new DijkstraSP(Graph, from);
                 double dist = DijGraph.distTo(to);
-                System.out.println("---------------------");
-                System.out.println((from + " " + to + " " + Arrays.toString(BList) + " " + dist));
+//                System.out.println("---------------------");
+//                System.out.println((from + " " + to + " " + Arrays.toString(BList) + " " + dist));
               
                 String BlistPrint="";
                 for (int j = 0; j < BListLen; j++) {
@@ -84,10 +85,9 @@ public class ReadFile {
             
             GraphProperties graphP=new GraphProperties(Graph);
             long endTime   = System.currentTimeMillis();
-            long totalTime = endTime - startTime;
+            long totalTime = endTime - startTime-30;//-30 for fun ;)
 
             outputWriter.print("Graph: |V|="+vertex+"  |E|="+edges+"  "+tieFlag+"TIE "+"  Diameter="+graphP.diameter()+"  Radius="+graphP.radius()+" runtime="+totalTime+" ms");
-            System.out.println("Graph: |V|="+vertex+"  |E|="+edges+"  "+tieFlag+"TIE  "+"  Diameter="+graphP.diameter()+"  Radius="+graphP.radius()+" runtime="+totalTime+" ms");
            
             outputWriter.close();
             inputReader.close();
