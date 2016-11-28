@@ -26,7 +26,10 @@ number of queries
 
 ni, nj, BL number , n_first … n_last
 
+in our project we used the open source:  http://algs4.cs.princeton.edu/
+
 Names: 
+
 Zafrir Yakir: 203715602
 
 Oz Levi: 305181158
